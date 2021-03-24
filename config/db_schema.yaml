@@ -15,10 +15,23 @@ meta_nodes:
         doc: >-
           Email.
         type: string
+      orcid:
+        doc: >-
+          ORCID
+        type: string
+      job-description:
+        doc: >-
+          Job description
+        type: string
+      consent:
+        doc: >-
+          Consent to be included in search
+        type: integer
     required:
       - name
       - url
       - email
+      - consent
     index: email
     meta:
       _id: email
@@ -31,12 +44,17 @@ meta_nodes:
         doc: >-
           Name of organisation
         type: string
+      type:
+        doc: >-
+          Type of organisation
+        type: string
       id:
         doc: >-
           ID of organisation.
         type: string
     required:
       - name
+      - type
       - id
     index: id
     meta:
@@ -61,7 +79,7 @@ meta_nodes:
       year:
         doc: >-
           Year of output.
-        type: int
+        type: integer
     required:
       - id
       - title

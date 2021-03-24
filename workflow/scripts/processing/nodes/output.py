@@ -4,7 +4,7 @@ import gzip
 import json
 import sys
 import pandas as pd
-
+from loguru import logger
 #################### leave me heare please :) ########################
 
 from workflow.scripts.utils.general import setup, get_source
@@ -28,16 +28,20 @@ FILE = get_source(meta_id,1)
 def run():
     data = os.path.join(dataDir, FILE)
     df = pd.read_csv(data, sep="\t")
-    df.rename(columns={'org-url':'id','org-name':'name','org-type':'type'},inplace=True)
-    df = df[['id','name','type']]
+    df.rename(columns={'url':'id','abstract':'text'},inplace=True)
     df.drop_duplicates(inplace=True)
+    logger.info(df.shape)
+    df.dropna(subset=['year'],inplace=True)
+    logger.info(df.shape)
+    df['year'] = df['year'].astype(int)
     create_import(df=df, meta_id=meta_id)
 
     # create constraints
     constraintCommands = [
-        "CREATE CONSTRAINT ON (n:Org) ASSERT n.id IS UNIQUE",
-        "CREATE CONSTRAINT ON (n:Org) ASSERT n.name IS UNIQUE",
-        "CREATE INDEX ON :Org(type);",
+        "CREATE CONSTRAINT ON (n:Output) ASSERT n.id IS UNIQUE",
+        "CREATE INDEX ON :Output(title);",
+        "CREATE INDEX ON :Output(text);",
+        "CREATE INDEX ON :Output(year);",
     ]
     create_constraints(constraintCommands, meta_id)
 

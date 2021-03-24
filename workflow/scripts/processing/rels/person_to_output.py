@@ -5,6 +5,8 @@ import json
 import sys
 import pandas as pd
 
+from loguru import logger
+
 #################### leave me heare please :) ########################
 
 from workflow.scripts.utils.general import setup, get_source
@@ -28,19 +30,12 @@ FILE = get_source(meta_id,1)
 def run():
     data = os.path.join(dataDir, FILE)
     df = pd.read_csv(data, sep="\t")
-    df.rename(columns={'org-url':'id','org-name':'name','org-type':'type'},inplace=True)
-    df = df[['id','name','type']]
+    df.rename(columns={'url':'id'},inplace=True)
+    df = df[['email','id']]
     df.drop_duplicates(inplace=True)
+    df.rename(columns={'email':'source','id':'target'},inplace=True)
+    logger.info(f'\n{df.head()}')
     create_import(df=df, meta_id=meta_id)
-
-    # create constraints
-    constraintCommands = [
-        "CREATE CONSTRAINT ON (n:Org) ASSERT n.id IS UNIQUE",
-        "CREATE CONSTRAINT ON (n:Org) ASSERT n.name IS UNIQUE",
-        "CREATE INDEX ON :Org(type);",
-    ]
-    create_constraints(constraintCommands, meta_id)
-
 
 if __name__ == "__main__":
     run()

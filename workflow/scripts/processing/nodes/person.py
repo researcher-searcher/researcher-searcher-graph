@@ -24,12 +24,19 @@ meta_id = args.name
 #######################################################################
 
 FILE = get_source(meta_id,1)
+META = get_source(meta_id,2)
 
 def run():
     data = os.path.join(dataDir, FILE)
     df = pd.read_csv(data, sep="\t")
     df.rename(columns={'page':'url'},inplace=True)
     df.drop_duplicates(inplace=True)
+    df['consent']=1
+
+    # todo merge with meta data to get job description and orcid
+    # 
+    exit()
+
     create_import(df=df, meta_id=meta_id)
 
     # create constraints
@@ -37,6 +44,7 @@ def run():
         "CREATE CONSTRAINT ON (n:Person) ASSERT n.name IS UNIQUE",
         "CREATE CONSTRAINT ON (n:Person) ASSERT n.email IS UNIQUE",
         "CREATE CONSTRAINT ON (n:Person) ASSERT n.url IS UNIQUE",
+        "CREATE INDEX ON :Output(consent);",
     ]
     create_constraints(constraintCommands, meta_id)
 
