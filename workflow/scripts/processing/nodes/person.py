@@ -34,9 +34,9 @@ def run():
 
     # create constraints
     constraintCommands = [
-        "CREATE CONSTRAINT ON (p:Person) ASSERT g.name IS UNIQUE",
-        "CREATE CONSTRAINT ON (p:Person) ASSERT g.email IS UNIQUE",
-        "CREATE CONSTRAINT ON (p:Person) ASSERT g.url IS UNIQUE",
+        "CREATE CONSTRAINT ON (n:Person) ASSERT n.name IS UNIQUE",
+        "CREATE CONSTRAINT ON (n:Person) ASSERT n.email IS UNIQUE",
+        "CREATE CONSTRAINT ON (n:Person) ASSERT n.url IS UNIQUE",
     ]
     create_constraints(constraintCommands, meta_id)
 

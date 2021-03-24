@@ -10,6 +10,12 @@ nodes:
     files: 
       1: person_metadata.tsv.gz
     script: nodes.org
+    source: UoB-PURE-23-03-21 
+  output:
+    name: Output
+    files: 
+      1: research_data.tsv.gz
+    script: nodes.output
     source: UoB-PURE-23-03-21      
 
 rels:
@@ -18,4 +24,10 @@ rels:
     files:
       1: person_metadata.tsv.gz
     script: rels.person_to_org.py
+    source: UoB-PURE-23-03-21
+  person_output:
+    name: PERSON_TO_OUTPUT
+    files:
+      1: research_metadata.tsv.gz
+    script: rels.person_to_output.py
     source: UoB-PURE-23-03-21

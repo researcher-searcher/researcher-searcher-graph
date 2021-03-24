@@ -35,8 +35,8 @@ def run():
 
     # create constraints
     constraintCommands = [
-        "CREATE CONSTRAINT ON (p:Org) ASSERT g.id IS UNIQUE",
-        "CREATE CONSTRAINT ON (p:Org) ASSERT g.name IS UNIQUE",
+        "CREATE CONSTRAINT ON (n:Org) ASSERT n.id IS UNIQUE",
+        "CREATE CONSTRAINT ON (n:Org) ASSERT n.name IS UNIQUE",
     ]
     create_constraints(constraintCommands, meta_id)
 

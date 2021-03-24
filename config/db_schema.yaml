@@ -42,6 +42,34 @@ meta_nodes:
     meta:
       _id: id
       _name: name 
+  Output:
+    doc: >-
+      Output data.
+    properties:
+      id:
+        doc: >-
+          ID of output.
+        type: string
+      title:
+        doc: >-
+          Title of output.
+        type: string
+      text:
+        doc: >-
+          Text of output.
+        type: string
+      year:
+        doc: >-
+          Year of output.
+        type: int
+    required:
+      - id
+      - title
+      - year
+    index: id
+    meta:
+      _id: id
+      _name: title 
 
 meta_rels:
   PERSON_TO_ORG:
@@ -54,6 +82,19 @@ meta_rels:
       target:
         doc: ''
         type: Org
+    required:
+      - source
+      - target
+  PERSON_TO_OUTPUT:
+    doc: >-
+      Connection between person and output
+    properties:
+      source:
+        doc: ''
+        type: Person
+      target:
+        doc: ''
+        type: Output
     required:
       - source
       - target
