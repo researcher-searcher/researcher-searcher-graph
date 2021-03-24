@@ -1,0 +1,59 @@
+meta_nodes:
+  Person:
+    doc: >-
+      Person data from University of Bristol.
+    properties:
+      name:
+        doc: >-
+          Name of person
+        type: string
+      url:
+        doc: >-
+          URL.
+        type: string
+      email:
+        doc: >-
+          Email.
+        type: string
+    required:
+      - name
+      - url
+      - email
+    index: email
+    meta:
+      _id: email
+      _name: name  
+  Org:
+    doc: >-
+      Organisation data.
+    properties:
+      name:
+        doc: >-
+          Name of organisation
+        type: string
+      id:
+        doc: >-
+          ID of organisation.
+        type: string
+    required:
+      - name
+      - id
+    index: id
+    meta:
+      _id: id
+      _name: name 
+
+meta_rels:
+  PERSON_TO_ORG:
+    doc: >-
+      Connection between person and organisation
+    properties:
+      source:
+        doc: ''
+        type: Person
+      target:
+        doc: ''
+        type: Org
+    required:
+      - source
+      - target

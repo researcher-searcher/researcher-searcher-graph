@@ -1,0 +1,21 @@
+nodes:
+  person:
+    name: Person
+    files: 
+      1: person_data.tsv.gz
+    script: nodes.person
+    source: UoB-PURE-23-03-21
+  org:
+    name: Org
+    files: 
+      1: person_metadata.tsv.gz
+    script: nodes.org
+    source: UoB-PURE-23-03-21      
+
+rels:
+  person_org:
+    name: PERSON_TO_ORG
+    files:
+      1: person_metadata.tsv.gz
+    script: rels.person_to_org.py
+    source: UoB-PURE-23-03-21
