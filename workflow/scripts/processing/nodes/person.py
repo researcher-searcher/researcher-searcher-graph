@@ -35,7 +35,7 @@ def run():
 
     # todo merge with meta data to get job description and orcid
     # 
-    exit()
+    #exit()
 
     create_import(df=df, meta_id=meta_id)
 

@@ -28,7 +28,7 @@ FILE = get_source(meta_id,1)
 def run():
     data = os.path.join(dataDir, FILE)
     df = pd.read_csv(data, sep="\t")
-    df.rename(columns={'academic-school-url':'id'},inplace=True)
+    df.rename(columns={'org-url':'id'},inplace=True)
     df = df[['email','id']]
     df.drop_duplicates(inplace=True)
     df.rename(columns={'email':'source','id':'target'},inplace=True)
