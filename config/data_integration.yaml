@@ -32,12 +32,12 @@ rels:
       1: research_metadata.tsv.gz
     script: rels.person_to_output
     source: UoB-PURE-23-03-21
-  #output_output:
-  #  name: OUTPUT_OUTPUT
-  #  files:
-  #    1: research_vector_pairs.pkl.gz
-  #  script: rels.output_to_output
-  #  source: UoB-PURE-23-03-21
+  output_output:
+    name: OUTPUT_OUTPUT
+    files:
+      1: research_vector_pairs.pkl.gz
+    script: rels.output_to_output
+    source: UoB-PURE-23-03-21
   person_person:
     name: PERSON_PERSON
     files:
