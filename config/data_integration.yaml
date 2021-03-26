@@ -21,14 +21,26 @@ nodes:
 
 rels:
   person_org:
-    name: PERSON_TO_ORG
+    name: PERSON_ORG
     files:
       1: person_metadata.tsv.gz
     script: rels.person_to_org
     source: UoB-PURE-23-03-21
   person_output:
-    name: PERSON_TO_OUTPUT
+    name: PERSON_OUTPUT
     files:
       1: research_metadata.tsv.gz
     script: rels.person_to_output
+    source: UoB-PURE-23-03-21
+  #output_output:
+  #  name: OUTPUT_OUTPUT
+  #  files:
+  #    1: research_vector_pairs.pkl.gz
+  #  script: rels.output_to_output
+  #  source: UoB-PURE-23-03-21
+  person_person:
+    name: PERSON_PERSON
+    files:
+      1: people_vector_pairs.pkl.gz
+    script: rels.person_to_person
     source: UoB-PURE-23-03-21

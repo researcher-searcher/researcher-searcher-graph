@@ -90,7 +90,7 @@ meta_nodes:
       _name: title 
 
 meta_rels:
-  PERSON_TO_ORG:
+  PERSON_ORG:
     doc: >-
       Connection between person and organisation
     properties:
@@ -103,7 +103,7 @@ meta_rels:
     required:
       - source
       - target
-  PERSON_TO_OUTPUT:
+  PERSON_OUTPUT:
     doc: >-
       Connection between person and output
     properties:
@@ -113,6 +113,40 @@ meta_rels:
       target:
         doc: ''
         type: Output
+    required:
+      - source
+      - target
+  OUTPUT_OUTPUT:
+    doc: >-
+      Connection between output and output calculated from mean output vector
+    properties:
+      source:
+        doc: ''
+        type: Output
+      target:
+        doc: ''
+        type: Output
+      score:
+        doc:  >-
+          The distance score.
+        type: float
+    required:
+      - source
+      - target
+  PERSON_PERSON:
+    doc: >-
+      Connection between person and person calculated from mean output vector
+    properties:
+      source:
+        doc: ''
+        type: Person
+      target:
+        doc: ''
+        type: Person
+      score:
+        doc:  >-
+          The distance score.
+        type: float
     required:
       - source
       - target

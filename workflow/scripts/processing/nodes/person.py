@@ -30,8 +30,10 @@ def run():
     data = os.path.join(dataDir, FILE)
     df = pd.read_csv(data, sep="\t")
     df.rename(columns={'page':'url'},inplace=True)
-    df.drop_duplicates(inplace=True)
     df['consent']=1
+    df['email'] = df['email'].str.lower()
+    df.drop_duplicates(subset=['email'],inplace=True)
+
 
     # todo merge with meta data to get job description and orcid
     # 
