@@ -33,6 +33,7 @@ def run():
     df['consent']=1
     df['email'] = df['email'].str.lower()
     df.drop_duplicates(subset=['email'],inplace=True)
+    df.drop_duplicates(subset=['name'],inplace=True)
 
 
     # todo merge with meta data to get job description and orcid
@@ -45,8 +46,9 @@ def run():
     constraintCommands = [
         "CREATE CONSTRAINT ON (n:Person) ASSERT n.name IS UNIQUE",
         "CREATE CONSTRAINT ON (n:Person) ASSERT n.email IS UNIQUE",
-        "CREATE CONSTRAINT ON (n:Person) ASSERT n.url IS UNIQUE",
         "CREATE INDEX ON :Output(consent);",
+        "CREATE INDEX ON :Output(url);",
+        
     ]
     create_constraints(constraintCommands, meta_id)
 
