@@ -46,8 +46,8 @@ def run():
     constraintCommands = [
         "CREATE CONSTRAINT ON (n:Person) ASSERT n.name IS UNIQUE",
         "CREATE CONSTRAINT ON (n:Person) ASSERT n.email IS UNIQUE",
-        "CREATE INDEX ON :Output(consent);",
-        "CREATE INDEX ON :Output(url);",
+        "CREATE INDEX ON :Person(consent);",
+        "CREATE INDEX ON :Person(url);",
         
     ]
     create_constraints(constraintCommands, meta_id)

@@ -40,7 +40,6 @@ def run():
     constraintCommands = [
         "CREATE CONSTRAINT ON (n:Output) ASSERT n.id IS UNIQUE",
         "CREATE INDEX ON :Output(title);",
-        "CREATE INDEX ON :Output(text);",
         "CREATE INDEX ON :Output(year);",
     ]
     create_constraints(constraintCommands, meta_id)

@@ -166,11 +166,11 @@ rule create_graph:
         echo 'starting container {CONTAINER_NAME}...'
         docker start {CONTAINER_NAME}
         echo 'waiting a bit...'
-        sleep 30
+        sleep 60
         echo 'adding contraints and extra bits...'
         docker exec --user neo4j {CONTAINER_NAME} sh /var/lib/neo4j/import/master_constraints.sh > {log.constraints} 2> {log.constraints}
         echo 'waiting a bit for indexes to populate...'
-        sleep 30
+        sleep 60
         echo 'checking import report...'
         python -m workflow.scripts.graph_build.import-report-check {NEO4J_LOGDIR}/import.report > {output}
         echo 'running tests...'
