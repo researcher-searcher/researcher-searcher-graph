@@ -88,6 +88,20 @@ meta_nodes:
     meta:
       _id: id
       _name: title 
+  NounChunk:
+    doc: >-
+      Noun chunks generated via Spacy from output data.
+    properties:
+      text:
+        doc: >-
+          Text of noun chunk.
+        type: string
+    required:
+      - text
+    index: text
+    meta:
+      _id: text
+      _name: text
 
 meta_rels:
   PERSON_ORG:
@@ -146,6 +160,23 @@ meta_rels:
       score:
         doc:  >-
           The distance score.
+        type: float
+    required:
+      - source
+      - target
+  PERSON_NOUN:
+    doc: >-
+      TF-IDF connection between person and noun chunks
+    properties:
+      source:
+        doc: ''
+        type: Person
+      target:
+        doc: ''
+        type: NounChunk
+      score:
+        doc:  >-
+          TF-IDF score.
         type: float
     required:
       - source

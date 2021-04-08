@@ -17,7 +17,13 @@ nodes:
     files: 
       1: research_data.tsv.gz
     script: nodes.output
-    source: UoB-PURE-23-03-21      
+    source: UoB-PURE-23-03-21  
+  noun_chunk:
+    name: NounChunk
+    files:
+      1: noun_chunks.tsv.gz
+    script: nodes.noun_chunks
+    source: UoB-PURE-23-03-21
 
 rels:
   person_org:
@@ -43,4 +49,10 @@ rels:
     files:
       1: people_vector_pairs.pkl.gz
     script: rels.person_to_person
+    source: UoB-PURE-23-03-21
+  person_noun:
+    name: PERSON_NOUN
+    files:
+      1: noun_chunks_tfidf.tsv.gz
+    script: rels.person_to_nouns
     source: UoB-PURE-23-03-21
