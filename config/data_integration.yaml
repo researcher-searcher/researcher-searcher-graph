@@ -54,5 +54,5 @@ rels:
     name: PERSON_NOUN
     files:
       1: noun_chunks_tfidf.tsv.gz
-    script: rels.person_to_nouns
+    script: rels.person_to_noun
     source: UoB-PURE-23-03-21
