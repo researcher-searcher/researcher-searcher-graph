@@ -11,10 +11,25 @@ def make_collab_links():
             (p1:Person)-[r1:PERSON_OUTPUT]-(o:Output)-[r2:PERSON_OUTPUT]-(p2:Person) 
         WITH
             p1,p2 
-        CREATE
+        MERGE
             (p1)-[c:COLLAB]->(p2)
         RETURN 
             count(c);
+    """
+    logger.info(query)
+    data=session.run(query).data()
+    logger.info(data)
+
+def add_output_counts():
+    query="""
+        MATCH 
+            (p1:Person)-[po:PERSON_OUTPUT]-(o:Output) 
+        WITH 
+            p1,count(o) as oc 
+        SET 
+            p1.oCount = oc 
+        RETURN
+            count(p1);
     """
     logger.info(query)
     data=session.run(query).data()
@@ -43,26 +58,37 @@ def get_graph_info(graph_name:str):
     data=session.run(query).data()
     logger.info(data)
 
+def delete_graph(graph_name:str):
+    query="""
+        CALL 
+            gds.graph.drop('{graph_name}') 
+        YIELD 
+            graphName;
+    """.format(graph_name=graph_name)
+    logger.info(query)
+    data=session.run(query).data()
+    logger.info(data)
+
 def make_sub_graph(graph_name:str):
     exists = check_if_graph_exists(graph_name)
     if exists == True:
         logger.info(f'{graph_name} already exists')
-        get_graph_info(graph_name)
-    else:
-        query="""
-            CALL 
-                gds.graph.create('{graph_name}',{{
-                        Person: {{}}
-                    }},
-                    {{
-                        COLLAB: {{
-                            orientation: 'UNDIRECTED'
-                    }}
-                }})
-        """.format(graph_name=graph_name)
-        logger.info(query)
-        data=session.run(query).data()
-        logger.info(data)
+        #get_graph_info(graph_name)
+        delete_graph(graph_name)
+    query="""
+        CALL 
+            gds.graph.create('{graph_name}',{{
+                    Person: {{properties: ['oCount']}}
+                }},
+                {{
+                    COLLAB: {{
+                        orientation: 'UNDIRECTED'
+                }}
+            }})
+    """.format(graph_name=graph_name)
+    logger.info(query)
+    data=session.run(query).data()
+    logger.info(data)
 
 def run_training(graph_name:str):
     # create test graph
@@ -120,7 +146,7 @@ def create_model(graph_name:str,model_name:str):
             testRelationshipType: 'COLLAB_TESTGRAPH',
             modelName: '{model_name}',
             validationFolds: 5,
-            classRatio: 0.013,
+            classRatio: 5,
             randomSeed: 2,
             params: [
                 {{penalty: 0.5, maxIterations: 10000}},
@@ -178,6 +204,7 @@ if __name__ == "__main__":
     graph_name='collab'
     model_name='lp-collab-model'
     make_collab_links()
+    add_output_counts()
     make_sub_graph(graph_name=graph_name)
     run_training(graph_name=graph_name)
     create_model(graph_name=graph_name,model_name=model_name)
