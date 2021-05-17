@@ -130,7 +130,7 @@ def create_model(graph_name:str,model_name:str):
     query="""
         CALL 
             gds.beta.model.drop('{model_name}')
-    """.format(graph_name=graph_name,model_name=model_name)
+    """.format(model_name=model_name)
     logger.info(query)
     try:
         data=session.run(query).data()
@@ -175,7 +175,7 @@ def predict_new(graph_name:str,model_name:str):
                 relationshipTypes: ['COLLAB'],
                 modelName: '{model_name}',
                 mutateRelationshipType: 'COLLAB_PREDICTED',
-                topN: 5,
+                topN: 50,
                 threshold: 0.45
             }}) YIELD relationshipsWritten
     """.format(graph_name=graph_name,model_name=model_name)

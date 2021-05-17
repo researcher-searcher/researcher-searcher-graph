@@ -27,11 +27,18 @@ meta_nodes:
         doc: >-
           Consent to be included in search
         type: integer
+      vector:
+        doc: >-
+          Vector embedding of output
+        items:
+          type: string
+        type: array
     required:
       - name
       - url
       - email
       - consent
+      - vector
     index: email
     meta:
       _id: email

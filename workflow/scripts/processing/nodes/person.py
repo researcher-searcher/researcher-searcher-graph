@@ -4,6 +4,7 @@ import gzip
 import json
 import sys
 import pandas as pd
+from loguru import logger
 
 #################### leave me heare please :) ########################
 
@@ -25,6 +26,7 @@ meta_id = args.name
 
 FILE = get_source(meta_id,1)
 META = get_source(meta_id,2)
+VECTOR = get_source(meta_id,3)
 
 def run():
     data = os.path.join(dataDir, FILE)
@@ -39,6 +41,13 @@ def run():
     # todo merge with meta data to get job description and orcid
     # 
     #exit()
+
+    # get person vector
+    vector_df = pd.read_pickle(os.path.join(dataDir,VECTOR))
+    #logger.info(vector_df.head())
+
+    df = df.merge(vector_df,on='email')
+    logger.info(df.head())
 
     create_import(df=df, meta_id=meta_id)
 
