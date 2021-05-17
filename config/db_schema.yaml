@@ -31,7 +31,7 @@ meta_nodes:
         doc: >-
           Vector embedding of output
         items:
-          type: string
+          type: float
         type: array
     required:
       - name

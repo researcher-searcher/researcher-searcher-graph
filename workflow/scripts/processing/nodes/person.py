@@ -5,6 +5,7 @@ import json
 import sys
 import pandas as pd
 from loguru import logger
+from workflow.scripts.general import create_neo4j_array_from_array
 
 #################### leave me heare please :) ########################
 
@@ -36,7 +37,7 @@ def run():
     df['email'] = df['email'].str.lower()
     df.drop_duplicates(subset=['email'],inplace=True)
     df.drop_duplicates(subset=['name'],inplace=True)
-
+    logger.info(df.shape)
 
     # todo merge with meta data to get job description and orcid
     # 
@@ -44,11 +45,16 @@ def run():
 
     # get person vector
     vector_df = pd.read_pickle(os.path.join(dataDir,VECTOR))
-    #logger.info(vector_df.head())
+    logger.info(vector_df.head())
+    logger.info(vector_df.shape)
+    logger.info(vector_df.dtypes)
 
     df = df.merge(vector_df,on='email')
+    # modify the vector to be in suitable array format, e.g. ;
+    df = create_neo4j_array_from_array(df,'vector')
     logger.info(df.head())
-
+    logger.info(df.shape)
+    logger.info(df.dtypes)
     create_import(df=df, meta_id=meta_id)
 
     # create constraints
