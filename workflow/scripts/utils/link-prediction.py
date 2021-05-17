@@ -200,7 +200,40 @@ def write_to_graph(graph_name:str):
     except Exception as e:
         logger.info(e)
 
-if __name__ == "__main__":
+def get_people():
+    # get list of people
+    query="""
+        MATCH
+            (p:Person)
+        RETURN 
+            p{._name,._id}
+    """
+    logger.info(query)
+    try:
+        data=session.run(query).data()
+        df = pd.json_normalize(data)
+        #logger.info(df.head())
+    except Exception as e:
+        logger.info(e)
+    return df
+
+def get_person_person():
+    query="""
+        MATCH
+            (p1:Person)-[pp:PERSON_PERSON]-(p2:Person)
+        RETURN 
+            p1._name as p1, p2._name as p2, pp.score as score
+    """
+    logger.info(query)
+    try:
+        data=session.run(query).data()
+        df = pd.json_normalize(data)
+        logger.info(df.head())
+    except Exception as e:
+        logger.info(e)
+    return df
+
+def run_ml():
     graph_name='collab'
     model_name='lp-collab-model'
     make_collab_links()
@@ -210,3 +243,54 @@ if __name__ == "__main__":
     create_model(graph_name=graph_name,model_name=model_name)
     predict_new(graph_name=graph_name,model_name=model_name)
     write_to_graph(graph_name=graph_name)
+
+
+
+
+def run_manual():
+    make_collab_links()
+    person_df = get_people()
+    #pp_df = get_person_person()
+    pNames = list(person_df['p._name'])
+    #logger.info(pNames)
+    models = [
+        'adamicAdar',
+        'commonNeighbors',
+        'preferentialAttachment',
+        'resourceAllocation',
+        'totalNeighbors'
+    ]
+    outData = []
+    for i in range(0,len(pNames)):
+        for j in range(i+1,len(pNames)):
+            for m in models:
+                p1 = pNames[i]
+                p2 = pNames[j]
+                query="""
+                    MATCH 
+                        (p1:Person {{_name: "{p1}"}})
+                    MATCH
+                        (p2:Person {{_name: "{p2}"}})
+                    RETURN 
+                        gds.alpha.linkprediction.{model}(p1, p2, {{relationshipQuery: "COLLAB"}}) AS score
+                """.format(p1=p1,p2=p2,model=m)
+                #logger.info(f'{i} {j} {query}')
+                try:
+                    data=session.run(query).data()
+                    #logger.info(data)
+                    if len(data)>0:
+                        if data[0]['score']>0:
+                            #logger.info(f'{p1} {p2} {m} {data}')
+                            outData.append(
+                                {'p1':p1,'p2':p2,'model':m,'score':data[0]['score']}
+                            )
+                except Exception as e:
+                    logger.info(e)
+    df = pd.DataFrame(outData)
+    logger.info(f'\n{df.head()}')
+
+if __name__ == "__main__":
+    #run_ml()
+    run_manual()
+    #get_person_person()
+    
