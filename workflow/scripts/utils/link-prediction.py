@@ -160,9 +160,9 @@ def create_model(graph_name:str,model_name:str):
             testRelationshipType: 'COLLAB_TESTGRAPH',
             modelName: '{model_name}',
             featureProperties: ['oCount','vector'],
-            validationFolds: 50,
-            classRatio: 1,
-            randomSeed: 2,
+            validationFolds: 5,
+            classRatio: 23,
+            randomSeed: 1,
             params: [
                 {{penalty: 0.0, maxIterations: 10000}},
                 {{penalty: 0.1, maxIterations: 10000}},
@@ -199,7 +199,7 @@ def predict_new(graph_name:str,model_name:str):
                 modelName: '{model_name}',
                 mutateRelationshipType: 'COLLAB_PREDICTED',
                 topN: 500,
-                threshold: 0.1
+                threshold: 0.45
             }}) YIELD relationshipsWritten
     """.format(graph_name=graph_name,model_name=model_name)
     logger.info(query)
@@ -241,7 +241,7 @@ def write_to_graph(graph_name:str):
         MATCH
             (p1)-[pp:PERSON_PERSON]-(p2)
         RETURN
-            p1.name as p1, p2.name as p2, r.probability as prob, pp.score as distance 
+            distinct p1.name as p1, p2.name as p2, r.probability as prob, pp.score as distance 
         ORDER BY
             prob desc
 

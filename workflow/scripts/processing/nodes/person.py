@@ -5,7 +5,7 @@ import json
 import sys
 import pandas as pd
 from loguru import logger
-from workflow.scripts.general import create_neo4j_array_from_array
+from workflow.scripts.utils.general import create_neo4j_array_from_array
 
 #################### leave me heare please :) ########################
 
@@ -34,7 +34,8 @@ def run():
     df = pd.read_csv(data, sep="\t")
     df.rename(columns={'page':'url'},inplace=True)
     df['consent']=1
-    df['email'] = df['email'].str.lower()
+    df['email'] = df['email'].str.lower().strip()
+    df['name'] = df['name'].str.strip()
     df.drop_duplicates(subset=['email'],inplace=True)
     df.drop_duplicates(subset=['name'],inplace=True)
     logger.info(df.shape)
@@ -49,7 +50,9 @@ def run():
     logger.info(vector_df.shape)
     logger.info(vector_df.dtypes)
 
+    # note this merge removes quite a lot of people
     df = df.merge(vector_df,on='email')
+
     # modify the vector to be in suitable array format, e.g. ;
     df = create_neo4j_array_from_array(df,'vector')
     logger.info(df.head())
