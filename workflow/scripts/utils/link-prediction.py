@@ -35,6 +35,29 @@ def add_output_counts():
     data=session.run(query).data()
     logger.info(data)
 
+def add_collab_counts():
+    query="""
+        MATCH 
+            (p:Person) 
+        SET
+            p.cCount = 0;
+        """
+    logger.info(query)
+    data=session.run(query).data()
+    query="""
+        MATCH 
+            (p1:Person)-[c:COLLAB]-(:Person) 
+        WITH 
+            p1,count(distinct(c)) as c 
+        SET 
+            p1.cCount = c 
+        RETURN
+            count(p1);
+    """
+    logger.info(query)
+    data=session.run(query).data()
+    logger.info(data)
+
 def add_org():
     query="""
         MATCH 
@@ -90,7 +113,7 @@ def make_sub_graph(graph_name:str):
     query="""
         CALL 
             gds.graph.create('{graph_name}',{{
-                    Person: {{properties: ['oCount','vector']}}
+                    Person: {{properties: ['cCount','vector']}}
                 }},
                 {{
                     COLLAB: {{
@@ -159,9 +182,9 @@ def create_model(graph_name:str,model_name:str):
             trainRelationshipType: 'COLLAB_TRAINGRAPH',
             testRelationshipType: 'COLLAB_TESTGRAPH',
             modelName: '{model_name}',
-            featureProperties: ['oCount','vector'],
+            featureProperties: ['cCount','vector'],
             validationFolds: 5,
-            classRatio: 23,
+            classRatio: 2,
             randomSeed: 1,
             params: [
                 {{penalty: 0.0, maxIterations: 10000}},
@@ -198,7 +221,7 @@ def predict_new(graph_name:str,model_name:str):
                 relationshipTypes: ['COLLAB'],
                 modelName: '{model_name}',
                 mutateRelationshipType: 'COLLAB_PREDICTED',
-                topN: 500,
+                topN: 5000,
                 threshold: 0.45
             }}) YIELD relationshipsWritten
     """.format(graph_name=graph_name,model_name=model_name)
@@ -293,6 +316,7 @@ def run_ml():
     make_collab_links()
     #add_org()
     add_output_counts()
+    add_collab_counts()
     make_sub_graph(graph_name=graph_name)
     run_training(graph_name=graph_name)
     create_model(graph_name=graph_name,model_name=model_name)
@@ -349,5 +373,4 @@ def run_manual():
 if __name__ == "__main__":
     run_ml()
     #run_manual()
-    #get_person_person()
     

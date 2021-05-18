@@ -72,6 +72,7 @@ if __name__ == "__main__":
                 'person':i,
                 'output':data[0]['oc'],
                 'collab':s[0],
+                'pc':s[0]/data[0]['oc'],
                 'min':s[1][0],
                 'max':s[1][1],
                 'mean':s[2],
@@ -80,6 +81,7 @@ if __name__ == "__main__":
                 'kurtosis':s[5]
             })
     df = pd.DataFrame(pData)
-    df = df.sort_values(by='mean')
+    df = df.sort_values(by='pc')
     logger.info(f'\n{df}')
+    df.to_csv('workflow/results/collab-metrics.csv.gz',index=False)
 
