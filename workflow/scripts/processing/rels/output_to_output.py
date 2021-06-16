@@ -43,9 +43,10 @@ def run():
         df.drop_duplicates(inplace=True)
         df.rename(columns={'url1':'source','url2':'target'},inplace=True)
         logger.info(f'\n{df.head()}')
+        create_import(df=df, meta_id=meta_id)
     except:
         logger.warning(f'Something wrong with {data}, maybe it is empty')
-    create_import(df=df, meta_id=meta_id)
+    
 
 if __name__ == "__main__":
     run()

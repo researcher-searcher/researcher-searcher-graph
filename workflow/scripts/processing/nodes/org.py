@@ -28,9 +28,10 @@ FILE = get_source(meta_id,1)
 def run():
     data = os.path.join(dataDir, FILE)
     df = pd.read_csv(data, sep="\t")
+    df.drop(columns=['name'],inplace=True)
     df.rename(columns={'org-url':'id','org-name':'name','org-type':'type'},inplace=True)
     df = df[['id','name','type']]
-    df.drop_duplicates(inplace=True)
+    df.drop_duplicates(subset=['id'],inplace=True)
     create_import(df=df, meta_id=meta_id)
 
     # create constraints
