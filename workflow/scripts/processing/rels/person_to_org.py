@@ -29,9 +29,9 @@ def run():
     data = os.path.join(dataDir, FILE)
     df = pd.read_csv(data, sep="\t")
     df.rename(columns={'org-url':'id'},inplace=True)
-    df = df[['email','id']]
+    df = df[['person_id','id']]
     df.drop_duplicates(inplace=True)
-    df.rename(columns={'email':'source','id':'target'},inplace=True)
+    df.rename(columns={'person_id':'source','id':'target'},inplace=True)
     create_import(df=df, meta_id=meta_id)
 
 if __name__ == "__main__":

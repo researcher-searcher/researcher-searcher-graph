@@ -39,18 +39,18 @@ def run():
     logger.info(df.shape)
     
     # drop same pair
-    df = df[df['email1'] != df['email2']]
+    df = df[df['person_id1'] != df['person_id2']]
     logger.info(df.shape)
     
     # drop reverse pair
     # this won't work well for large data set
-    dupes = df[['email1','email2']].T.apply(sorted).T.duplicated()
+    dupes = df[['person_id1','person_id2']].T.apply(sorted).T.duplicated()
     df = df[~dupes]
     logger.info(df.shape)
     
     logger.info(f'\n{df.head()}')
     df.drop_duplicates(inplace=True)
-    df.rename(columns={'email1':'source','email2':'target'},inplace=True)
+    df.rename(columns={'person_id1':'source','person_id2':'target'},inplace=True)
     logger.info(f'\n{df.head()}')
     create_import(df=df, meta_id=meta_id)
 

@@ -25,19 +25,18 @@ meta_id = args.name
 
 #######################################################################
 
-FILE = get_source(meta_id,1)
-META = get_source(meta_id,2)
-VECTOR = get_source(meta_id,3)
+META = get_source(meta_id,1)
+VECTOR = get_source(meta_id,2)
 
 def run():
-    data = os.path.join(dataDir, FILE)
+    data = os.path.join(dataDir, META)
     df = pd.read_csv(data, sep="\t")
-    df.rename(columns={'page':'url'},inplace=True)
     df['consent']=1
-    df['email'] = df['email'].str.lower().strip()
     df['name'] = df['name'].str.strip()
-    df.drop_duplicates(subset=['email'],inplace=True)
     df.drop_duplicates(subset=['name'],inplace=True)
+
+    # drop org cols
+    df.drop(columns=['org-name','org-type','org-url'],inplace=True)
     logger.info(df.shape)
 
     # todo merge with meta data to get job description and orcid
@@ -51,7 +50,7 @@ def run():
     logger.info(vector_df.dtypes)
 
     # note this merge removes quite a lot of people
-    df = df.merge(vector_df,on='email')
+    df = df.merge(vector_df,on='person_id')
 
     # modify the vector to be in suitable array format, e.g. ;
     df = create_neo4j_array_from_array(df,'vector')
@@ -63,7 +62,7 @@ def run():
     # create constraints
     constraintCommands = [
         "CREATE CONSTRAINT ON (n:Person) ASSERT n.name IS UNIQUE",
-        "CREATE CONSTRAINT ON (n:Person) ASSERT n.email IS UNIQUE",
+        "CREATE CONSTRAINT ON (n:Person) ASSERT n.person_id IS UNIQUE",
         "CREATE INDEX ON :Person(consent);",
         "CREATE INDEX ON :Person(url);",
         

@@ -11,9 +11,9 @@ meta_nodes:
         doc: >-
           URL.
         type: string
-      email:
+      person_id:
         doc: >-
-          Email.
+          ID.
         type: string
       orcid:
         doc: >-
@@ -36,12 +36,12 @@ meta_nodes:
     required:
       - name
       - url
-      - email
+      - person_id
       - consent
       - vector
-    index: email
+    index: person_id
     meta:
-      _id: email
+      _id: person_id
       _name: name  
   Org:
     doc: >-

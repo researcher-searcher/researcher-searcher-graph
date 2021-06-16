@@ -33,15 +33,18 @@ def run():
     logger.info(f'\n{df.head()}')
     logger.info(df.shape)
 
-    # drop low scores (what is low?)
-    df = df[df['score']>0.9]
-    logger.info(f'\n{df.head()}')
-    logger.info(df.shape)
-    
-    logger.info(f'\n{df.head()}')
-    df.drop_duplicates(inplace=True)
-    df.rename(columns={'url1':'source','url2':'target'},inplace=True)
-    logger.info(f'\n{df.head()}')
+    try:
+        # drop low scores (what is low?)
+        df = df[df['score']>0.9]
+        logger.info(f'\n{df.head()}')
+        logger.info(df.shape)
+        
+        logger.info(f'\n{df.head()}')
+        df.drop_duplicates(inplace=True)
+        df.rename(columns={'url1':'source','url2':'target'},inplace=True)
+        logger.info(f'\n{df.head()}')
+    except:
+        logger.warning(f'Something wrong with {data}, maybe it is empty')
     create_import(df=df, meta_id=meta_id)
 
 if __name__ == "__main__":

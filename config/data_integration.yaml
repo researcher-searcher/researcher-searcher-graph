@@ -2,9 +2,8 @@ nodes:
   person:
     name: Person
     files: 
-      1: person_data.tsv.gz
-      2: person_metadata.tsv.gz
-      3: people_vectors.pkl.gz
+      1: person_metadata.tsv.gz
+      2: people_vectors.pkl.gz
     script: nodes.person
     source: UoB-PURE-23-03-21
   org:
