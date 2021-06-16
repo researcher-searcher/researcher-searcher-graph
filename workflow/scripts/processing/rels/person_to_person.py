@@ -34,7 +34,7 @@ def run():
     logger.info(df.shape)
 
     # drop low scores (what is low?)
-    df = df[df['score']>0.9]
+    df = df[df['score']>0.8]
     logger.info(f'\n{df.head()}')
     logger.info(df.shape)
     
