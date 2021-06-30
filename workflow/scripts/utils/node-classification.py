@@ -5,8 +5,9 @@ import pandas as pd
 driver = neo4j_connect()
 session = driver.session()
 
+
 def make_output_class():
-    query="""
+    query = """
         MATCH
             (p1:Person)-[r1:PERSON_OUTPUT]-(o:Output)-[r2:PERSON_OUTPUT]-(p2:Person) 
         WITH
@@ -17,12 +18,11 @@ def make_output_class():
             count(c);
     """
     logger.info(query)
-    data=session.run(query).data()
+    data = session.run(query).data()
     logger.info(data)
 
 
-
 if __name__ == "__main__":
-    graph_name='output-class'
-    model_name='nc-output-class-model'
+    graph_name = "output-class"
+    model_name = "nc-output-class-model"
     make_output_class()

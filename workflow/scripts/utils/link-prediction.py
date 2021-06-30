@@ -5,8 +5,9 @@ import pandas as pd
 driver = neo4j_connect()
 session = driver.session()
 
+
 def make_collab_links():
-    query="""
+    query = """
         MATCH
             (p1:Person)-[r1:PERSON_OUTPUT]-(o:Output)-[r2:PERSON_OUTPUT]-(p2:Person) 
         WITH
@@ -17,11 +18,12 @@ def make_collab_links():
             count(c);
     """
     logger.info(query)
-    data=session.run(query).data()
+    data = session.run(query).data()
     logger.info(data)
 
+
 def add_output_counts():
-    query="""
+    query = """
         MATCH 
             (p1:Person)-[po:PERSON_OUTPUT]-(o:Output) 
         WITH 
@@ -32,19 +34,20 @@ def add_output_counts():
             count(p1);
     """
     logger.info(query)
-    data=session.run(query).data()
+    data = session.run(query).data()
     logger.info(data)
 
+
 def add_collab_counts():
-    query="""
+    query = """
         MATCH 
             (p:Person) 
         SET
             p.cCount = 0;
         """
     logger.info(query)
-    data=session.run(query).data()
-    query="""
+    data = session.run(query).data()
+    query = """
         MATCH 
             (p1:Person)-[c:COLLAB]-(:Person) 
         WITH 
@@ -55,11 +58,12 @@ def add_collab_counts():
             count(p1);
     """
     logger.info(query)
-    data=session.run(query).data()
+    data = session.run(query).data()
     logger.info(data)
 
+
 def add_org():
-    query="""
+    query = """
         MATCH 
             (p:Person)-[po:PERSON_ORG]-(o:Org) 
         WITH 
@@ -70,47 +74,57 @@ def add_org():
     logger.info(query)
     session.run(query).data()
 
-def check_if_graph_exists(graph_name:str):
-    query="""
+
+def check_if_graph_exists(graph_name: str):
+    query = """
         CALL 
             gds.graph.exists('{graph_name}') 
         YIELD 
             exists;
-    """.format(graph_name=graph_name)
+    """.format(
+        graph_name=graph_name
+    )
     logger.info(query)
-    data=session.run(query).data()
+    data = session.run(query).data()
     logger.info(data)
-    return data[0]['exists']
+    return data[0]["exists"]
 
-def get_graph_info(graph_name:str):
-    query="""
+
+def get_graph_info(graph_name: str):
+    query = """
         CALL 
             gds.graph.list('{graph_name}')
         YIELD 
             graphName, nodeQuery, relationshipQuery, nodeCount, relationshipCount, schema, creationTime, modificationTime, memoryUsage;
-    """.format(graph_name=graph_name)
+    """.format(
+        graph_name=graph_name
+    )
     logger.info(query)
-    data=session.run(query).data()
+    data = session.run(query).data()
     logger.info(data)
 
-def delete_graph(graph_name:str):
-    query="""
+
+def delete_graph(graph_name: str):
+    query = """
         CALL 
             gds.graph.drop('{graph_name}') 
         YIELD 
             graphName;
-    """.format(graph_name=graph_name)
+    """.format(
+        graph_name=graph_name
+    )
     logger.info(query)
-    data=session.run(query).data()
+    data = session.run(query).data()
     logger.info(data)
 
-def make_sub_graph(graph_name:str):
+
+def make_sub_graph(graph_name: str):
     exists = check_if_graph_exists(graph_name)
     if exists == True:
-        logger.info(f'{graph_name} already exists')
-        #get_graph_info(graph_name)
+        logger.info(f"{graph_name} already exists")
+        # get_graph_info(graph_name)
         delete_graph(graph_name)
-    query="""
+    query = """
         CALL 
             gds.graph.create('{graph_name}',{{
                     Person: {{properties: ['cCount','vector']}}
@@ -120,14 +134,17 @@ def make_sub_graph(graph_name:str):
                         orientation: 'UNDIRECTED'
                 }}
             }})
-    """.format(graph_name=graph_name)
+    """.format(
+        graph_name=graph_name
+    )
     logger.info(query)
-    data=session.run(query).data()
+    data = session.run(query).data()
     logger.info(data)
 
-def run_training(graph_name:str):
+
+def run_training(graph_name: str):
     # create test graph
-    query="""
+    query = """
         CALL 
             gds.alpha.ml.splitRelationships.mutate('{graph_name}', {{
                 relationshipTypes: ['COLLAB'],
@@ -135,16 +152,18 @@ def run_training(graph_name:str):
                 holdoutRelationshipType: 'COLLAB_TESTGRAPH',
                 holdoutFraction: 0.2
             }}) YIELD relationshipsWritten
-    """.format(graph_name=graph_name)
+    """.format(
+        graph_name=graph_name
+    )
     logger.info(query)
     try:
-        data=session.run(query).data()
+        data = session.run(query).data()
         logger.info(data)
     except Exception as e:
         logger.info(e)
 
     # create train graph
-    query="""
+    query = """
         CALL 
         gds.alpha.ml.splitRelationships.mutate('{graph_name}', {{
             relationshipTypes: ['COLLAB_REMAINING'],
@@ -152,23 +171,28 @@ def run_training(graph_name:str):
             holdoutRelationshipType: 'COLLAB_TRAINGRAPH',
             holdoutFraction: 0.2
         }}) YIELD relationshipsWritten
-    """.format(graph_name=graph_name)
+    """.format(
+        graph_name=graph_name
+    )
     logger.info(query)
     try:
-        data=session.run(query).data()
+        data = session.run(query).data()
         logger.info(data)
     except Exception as e:
         logger.info(e)
 
-def create_model(graph_name:str,model_name:str):
+
+def create_model(graph_name: str, model_name: str):
     # drop model first as only allowed one
-    query="""
+    query = """
         CALL 
             gds.beta.model.drop('{model_name}')
-    """.format(model_name=model_name)
+    """.format(
+        model_name=model_name
+    )
     logger.info(query)
     try:
-        data=session.run(query).data()
+        data = session.run(query).data()
         logger.info(data)
     except Exception as e:
         logger.info(e)
@@ -176,7 +200,7 @@ def create_model(graph_name:str,model_name:str):
     # create model
     # classRatio
     # (((518*517)/2)-4988)/4988 = 25
-    query="""
+    query = """
         CALL 
             gds.alpha.ml.linkPrediction.train('{graph_name}', {{
             trainRelationshipType: 'COLLAB_TRAINGRAPH',
@@ -206,16 +230,19 @@ def create_model(graph_name:str,model_name:str):
             modelInfo.bestParameters AS winningModel,
             modelInfo.metrics.AUCPR.outerTrain AS trainGraphScore,
             modelInfo.metrics.AUCPR.test AS testGraphScore
-    """.format(graph_name=graph_name,model_name=model_name)
+    """.format(
+        graph_name=graph_name, model_name=model_name
+    )
     logger.info(query)
     try:
-        data=session.run(query).data()
+        data = session.run(query).data()
         logger.info(data)
     except Exception as e:
         logger.info(e)
- 
-def predict_new(graph_name:str,model_name:str):
-    query="""
+
+
+def predict_new(graph_name: str, model_name: str):
+    query = """
         CALL 
             gds.alpha.ml.linkPrediction.predict.mutate('{graph_name}', {{
                 relationshipTypes: ['COLLAB'],
@@ -224,17 +251,20 @@ def predict_new(graph_name:str,model_name:str):
                 topN: 5000,
                 threshold: 0.45
             }}) YIELD relationshipsWritten
-    """.format(graph_name=graph_name,model_name=model_name)
+    """.format(
+        graph_name=graph_name, model_name=model_name
+    )
     logger.info(query)
     try:
-        data=session.run(query).data()
+        data = session.run(query).data()
         logger.info(data)
     except Exception as e:
         logger.info(e)
 
-def write_to_graph(graph_name:str):
+
+def write_to_graph(graph_name: str):
     # delete existing first
-    query="""
+    query = """
         MATCH 
             (p1:Person)-[r:COLLAB_PREDICTED]-(p2:Person) 
         DELETE
@@ -242,21 +272,23 @@ def write_to_graph(graph_name:str):
     """
     session.run(query).data()
 
-    query="""
+    query = """
         CALL 
             gds.graph.writeRelationship('{graph_name}', 'COLLAB_PREDICTED', 'probability')
         YIELD 
             relationshipsWritten, propertiesWritten
-    """.format(graph_name=graph_name)
+    """.format(
+        graph_name=graph_name
+    )
     logger.info(query)
     try:
-        data=session.run(query).data()
+        data = session.run(query).data()
         logger.info(data)
     except Exception as e:
         logger.info(e)
 
     # see the new rels
-    query="""
+    query = """
         MATCH 
             (p1:Person)-[r:COLLAB_PREDICTED]-(p2:Person)
         WITH 
@@ -271,15 +303,16 @@ def write_to_graph(graph_name:str):
     """
     logger.info(query)
     try:
-        data=session.run(query).data()
+        data = session.run(query).data()
         df = pd.json_normalize(data)
-        logger.info(f'\n{df}')
+        logger.info(f"\n{df}")
     except Exception as e:
         logger.info(e)
 
+
 def get_people():
     # get list of people
-    query="""
+    query = """
         MATCH
             (p:Person)
         RETURN 
@@ -287,15 +320,16 @@ def get_people():
     """
     logger.info(query)
     try:
-        data=session.run(query).data()
+        data = session.run(query).data()
         df = pd.json_normalize(data)
-        #logger.info(df.head())
+        # logger.info(df.head())
     except Exception as e:
         logger.info(e)
     return df
 
+
 def get_person_person():
-    query="""
+    query = """
         MATCH
             (p1:Person)-[pp:PERSON_PERSON]-(p2:Person)
         RETURN 
@@ -303,74 +337,80 @@ def get_person_person():
     """
     logger.info(query)
     try:
-        data=session.run(query).data()
+        data = session.run(query).data()
         df = pd.json_normalize(data)
         logger.info(df.head())
     except Exception as e:
         logger.info(e)
     return df
 
+
 def run_ml():
-    graph_name='collab'
-    model_name='lp-collab-model'
+    graph_name = "collab"
+    model_name = "lp-collab-model"
     make_collab_links()
-    #add_org()
+    # add_org()
     add_output_counts()
     add_collab_counts()
     make_sub_graph(graph_name=graph_name)
     run_training(graph_name=graph_name)
-    create_model(graph_name=graph_name,model_name=model_name)
-    predict_new(graph_name=graph_name,model_name=model_name)
+    create_model(graph_name=graph_name, model_name=model_name)
+    predict_new(graph_name=graph_name, model_name=model_name)
     write_to_graph(graph_name=graph_name)
-
-
 
 
 def run_manual():
     make_collab_links()
     person_df = get_people()
-    #pp_df = get_person_person()
-    pNames = list(person_df['p._name'])
-    #logger.info(pNames)
+    # pp_df = get_person_person()
+    pNames = list(person_df["p._name"])
+    # logger.info(pNames)
     models = [
-        'adamicAdar',
-        'commonNeighbors',
-        'preferentialAttachment',
-        'resourceAllocation',
-        'totalNeighbors'
+        "adamicAdar",
+        "commonNeighbors",
+        "preferentialAttachment",
+        "resourceAllocation",
+        "totalNeighbors",
     ]
     outData = []
-    for i in range(0,len(pNames)):
+    for i in range(0, len(pNames)):
         logger.info(i)
-        for j in range(i+1,len(pNames)):
+        for j in range(i + 1, len(pNames)):
             for m in models:
                 p1 = pNames[i]
                 p2 = pNames[j]
-                query="""
+                query = """
                     MATCH 
                         (p1:Person {{_name: "{p1}"}})
                     MATCH
                         (p2:Person {{_name: "{p2}"}})
                     RETURN 
                         gds.alpha.linkprediction.{model}(p1, p2, {{relationshipQuery: "COLLAB"}}) AS score
-                """.format(p1=p1,p2=p2,model=m)
-                #logger.info(f'{i} {j} {query}')
+                """.format(
+                    p1=p1, p2=p2, model=m
+                )
+                # logger.info(f'{i} {j} {query}')
                 try:
-                    data=session.run(query).data()
-                    #logger.info(data)
-                    if len(data)>0:
-                        if data[0]['score']>0:
-                            #logger.info(f'{p1} {p2} {m} {data}')
+                    data = session.run(query).data()
+                    # logger.info(data)
+                    if len(data) > 0:
+                        if data[0]["score"] > 0:
+                            # logger.info(f'{p1} {p2} {m} {data}')
                             outData.append(
-                                {'p1':p1,'p2':p2,'model':m,'score':data[0]['score']}
+                                {
+                                    "p1": p1,
+                                    "p2": p2,
+                                    "model": m,
+                                    "score": data[0]["score"],
+                                }
                             )
                 except Exception as e:
                     logger.info(e)
     df = pd.DataFrame(outData)
-    logger.info(f'\n{df.head()}')
-    df.to_csv('workflow/results/link-pred.csv.gz',index=False)
+    logger.info(f"\n{df.head()}")
+    df.to_csv("workflow/results/link-pred.csv.gz", index=False)
+
 
 if __name__ == "__main__":
     run_ml()
-    #run_manual()
-    
+    # run_manual()

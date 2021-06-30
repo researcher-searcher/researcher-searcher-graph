@@ -5,6 +5,7 @@ import json
 import sys
 import pandas as pd
 from loguru import logger
+
 #################### leave me heare please :) ########################
 
 from workflow.scripts.utils.general import setup, get_source
@@ -23,17 +24,18 @@ meta_id = args.name
 
 #######################################################################
 
-FILE = get_source(meta_id,1)
+FILE = get_source(meta_id, 1)
+
 
 def run():
     data = os.path.join(dataDir, FILE)
     df = pd.read_csv(data, sep="\t")
-    df.rename(columns={'url':'id','abstract':'text'},inplace=True)
+    df.rename(columns={"url": "id", "abstract": "text"}, inplace=True)
     df.drop_duplicates(inplace=True)
     logger.info(df.shape)
-    df.dropna(subset=['year'],inplace=True)
+    df.dropna(subset=["year"], inplace=True)
     logger.info(df.shape)
-    df['year'] = df['year'].astype(int)
+    df["year"] = df["year"].astype(int)
     create_import(df=df, meta_id=meta_id)
 
     # create constraints

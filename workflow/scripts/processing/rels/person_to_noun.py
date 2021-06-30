@@ -23,14 +23,16 @@ meta_id = args.name
 
 #######################################################################
 
-FILE = get_source(meta_id,1)
+FILE = get_source(meta_id, 1)
+
 
 def run():
     data = os.path.join(dataDir, FILE)
     df = pd.read_csv(data, sep="\t")
     df.drop_duplicates(inplace=True)
-    df.rename(columns={'person_id':'source','noun_chunk':'target'},inplace=True)
+    df.rename(columns={"person_id": "source", "noun_chunk": "target"}, inplace=True)
     create_import(df=df, meta_id=meta_id)
+
 
 if __name__ == "__main__":
     run()

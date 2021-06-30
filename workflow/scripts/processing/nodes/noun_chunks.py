@@ -23,18 +23,19 @@ meta_id = args.name
 
 #######################################################################
 
-FILE = get_source(meta_id,1)
+FILE = get_source(meta_id, 1)
+
 
 def run():
     data = os.path.join(dataDir, FILE)
-    df = pd.read_csv(data, sep="\t", names=['text'])
+    df = pd.read_csv(data, sep="\t", names=["text"])
     df.drop_duplicates(inplace=True)
 
     create_import(df=df, meta_id=meta_id)
 
     # create constraints
     constraintCommands = [
-        "CREATE CONSTRAINT ON (n:NounChunk) ASSERT n.text IS UNIQUE",        
+        "CREATE CONSTRAINT ON (n:NounChunk) ASSERT n.text IS UNIQUE",
     ]
     create_constraints(constraintCommands, meta_id)
 

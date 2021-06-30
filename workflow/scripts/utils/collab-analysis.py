@@ -6,9 +6,10 @@ import pandas as pd
 driver = neo4j_connect()
 session = driver.session()
 
+
 def get_people():
     # get list of people
-    query="""
+    query = """
         MATCH
             (p:Person)
         RETURN 
@@ -16,15 +17,16 @@ def get_people():
     """
     logger.info(query)
     try:
-        data=session.run(query).data()
+        data = session.run(query).data()
         df = pd.json_normalize(data)
-        #logger.info(df.head())
+        # logger.info(df.head())
     except Exception as e:
         logger.info(e)
     return df
 
+
 def make_collab_links():
-    query="""
+    query = """
         MATCH
             (p1:Person)-[r1:PERSON_OUTPUT]-(o:Output)-[r2:PERSON_OUTPUT]-(p2:Person) 
         WITH
@@ -35,18 +37,19 @@ def make_collab_links():
             count(c);
     """
     logger.info(query)
-    data=session.run(query).data()
-    logger.info(data)    
+    data = session.run(query).data()
+    logger.info(data)
+
 
 if __name__ == "__main__":
     people_df = get_people()
-    pNames = list(people_df['p.name'])
+    pNames = list(people_df["p.name"])
     logger.info(pNames)
 
     make_collab_links()
     pData = []
     for i in pNames:
-        query="""
+        query = """
             MATCH 
                 (o:Output)-[:PERSON_OUTPUT]-(p1:Person)
             WHERE
@@ -61,27 +64,30 @@ if __name__ == "__main__":
                 (p1)-[pp:PERSON_PERSON]->(p2) 
             RETURN
                 oc,collect(pp.score) as pp
-        """.format(p1=i)
+        """.format(
+            p1=i
+        )
         logger.info(i)
-        data=session.run(query).data()
-        #logger.info(data)
-        if len(data)>0:
-            pp_vals = data[0]['pp']
-            s = stats.describe(data[0]['pp'])
-            pData.append({
-                'person':i,
-                'output':data[0]['oc'],
-                'collab':s[0],
-                'pc':s[0]/data[0]['oc'],
-                'min':s[1][0],
-                'max':s[1][1],
-                'mean':s[2],
-                'var':s[3],
-                'skew':s[4],
-                'kurtosis':s[5]
-            })
+        data = session.run(query).data()
+        # logger.info(data)
+        if len(data) > 0:
+            pp_vals = data[0]["pp"]
+            s = stats.describe(data[0]["pp"])
+            pData.append(
+                {
+                    "person": i,
+                    "output": data[0]["oc"],
+                    "collab": s[0],
+                    "pc": s[0] / data[0]["oc"],
+                    "min": s[1][0],
+                    "max": s[1][1],
+                    "mean": s[2],
+                    "var": s[3],
+                    "skew": s[4],
+                    "kurtosis": s[5],
+                }
+            )
     df = pd.DataFrame(pData)
-    df = df.sort_values(by='pc')
-    logger.info(f'\n{df}')
-    df.to_csv('workflow/results/collab-metrics.csv.gz',index=False)
-
+    df = df.sort_values(by="pc")
+    logger.info(f"\n{df}")
+    df.to_csv("workflow/results/collab-metrics.csv.gz", index=False)

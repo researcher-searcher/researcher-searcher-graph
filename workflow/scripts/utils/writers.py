@@ -249,7 +249,7 @@ def create_import(df=[], meta_id="", import_type="import"):
         schema_cols.extend([name_col_text, id_col_text])
 
         # add to dataframe
-        logger.info(f'\n{df.head()}')
+        logger.info(f"\n{df.head()}")
         df[name_col_text] = df[node_meta["_name"]]
         df[id_col_text] = df[node_meta["_id"]]
         logger.debug("\n{}", df.head())
