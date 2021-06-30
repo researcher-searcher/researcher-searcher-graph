@@ -62,7 +62,6 @@ def write_import(id, dir, importCommands):
     # with open(f, "r+") as file:
     #    i = headerData["data"]
     #    for line in file:
-    #        print(line)
     #        if line.startswith(i):
     #            logger.info("{} already in import statement", i)
     #        else:
@@ -133,7 +132,7 @@ def write_constraint(id, dir, constraintCommands):
 
 
 def pandas_profiler(df, meta_id):
-    print("Profiling...", meta_id)
+    logger.info(f"Profiling...{meta_id}")
     df.reset_index(drop=True, inplace=True)
     outDir = make_outDir(meta_id)
     profile = ProfileReport(df, minimal=True, pool_size=10)
