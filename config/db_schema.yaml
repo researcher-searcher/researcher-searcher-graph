@@ -33,6 +33,10 @@ meta_nodes:
         items:
           type: float
         type: array
+      email:
+        doc: >-
+          Email address
+        type: string
     required:
       - name
       - url
